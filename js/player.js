@@ -15,7 +15,11 @@ export function playerCtrl(f) {
   const ctl = { mx, my, fire: false, skill: inp.skill, dash: inp.dash, aim: null, sd: 0 };
   inp.skill = false; inp.dash = false;
 
-  if (inp.touchAim) {
+  if (inp.attack) {
+    ctl.fire = true;
+    // When moving, face movement direction; otherwise retain the last aim.
+    if (Math.hypot(mx,my)>0.2) ctl.aim={x:mx,y:my};
+  } else if (inp.touchAim) {
     // 모바일: 터치한 위치를 향해 조준하고 누르는 동안 공격
     const w = toWorld(inp.tx, inp.ty), dx = w.x - f.x, dy = w.y - f.y;
     if (Math.hypot(dx, dy) > 4) ctl.aim = { x: dx, y: dy };
