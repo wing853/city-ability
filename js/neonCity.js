@@ -1,7 +1,7 @@
 // Neon city environment art layer. Procedural SVG textures are cached as images.
 // All geometry comes from world.js; collision and gameplay remain unchanged.
 let sceneCanvas=null, sceneKey='';
-function image(svg){const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);return im}
+function image(svg){const im=new Image();im.onload=()=>{sceneKey='';};im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);return im}
 const wrap=(w,h,body)=>'<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+body+'</svg>';
 function buildingSVG(w,h,variant){
  const v=variant%5, neon=['#ff86ca','#71d9ff','#ffc07c','#b5a1ff','#7df0cf'][v];
