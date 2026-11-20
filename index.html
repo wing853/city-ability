@@ -51,7 +51,7 @@
   </table>
 
   <h2>4. 조작</h2>
-  <p><b>모바일</b>: 화면 왼쪽을 드래그해 이동, 오른쪽을 터치하면 터치한 위치를 향해 공격합니다(누르고 있는 동안 계속 발사, 손가락을 움직이면 조준이 따라감). 스킬과 구르기 버튼은 화면 오른쪽에 있고, 스킬은 마지막으로 조준한 방향으로 나갑니다.<br>
+  <p><b>모바일</b>: 화면 왼쪽을 드래그해 이동, 오른쪽 공격 버튼을 누르고 있는 동안 연사합니다. 이동 방향이나 마지막 조준 방향으로 공격합니다. 스킬과 구르기 버튼은 화면 오른쪽에 있고, 스킬은 마지막으로 조준한 방향으로 나갑니다.<br>
   <b>PC</b>: WASD 이동, 마우스로 조준, 클릭 공격, Space 스킬, Shift 구르기.</p>
 
   <h2>5. AI 봇</h2>
@@ -71,9 +71,10 @@
   <div id="hud"><div id="hpWrap"><div id="hpBar"></div><span id="hpTxt"></span></div><div id="info"></div><div id="zoneTxt"></div></div>
   <div id="feed"></div>
   <div id="joy" class="stick"><div id="knob" class="knob"></div></div>
-  <div id="bDash" class="btn">구르기</div>
-  <div id="bSkill" class="btn">스킬</div>
-  <div id="aimHint">오른쪽 터치: 그 위치로 공격</div>
+  <button id="bDash" class="btn action-btn" type="button">구르기</button>
+  <button id="bSkill" class="btn action-btn" type="button">스킬</button>
+  <button id="bAttack" class="btn action-btn" type="button" aria-label="기본 공격">공격</button>
+  <div id="aimHint">공격 버튼을 길게 눌러 연사</div>
 
   <div id="ovStart" class="ov">
     <h1>도시능력자</h1>
@@ -86,7 +87,7 @@
       <button id="btnReroll" class="card hidden" style="text-align:center;font-weight:800">다시 뽑기 (1회 남음)</button>
       <button id="btnGo" class="card hidden" style="text-align:center;font-weight:800;background:#4cc9ff;color:#06121c;border-color:#4cc9ff">이 능력으로 대전 시작</button>
     </div>
-    <p class="hint">4~10인 난투 · 나 + AI 봇 · 마지막까지 살아남으면 승리<br>모바일: 왼쪽 드래그 이동 / 오른쪽 터치 공격 · PC: WASD, 마우스, Space, Shift</p>
+    <p class="hint">4~10인 난투 · 나 + AI 봇 · 마지막까지 살아남으면 승리<br>모바일: 왼쪽 드래그 이동 / 오른쪽 공격 버튼 연사 · PC: WASD, 마우스, Space, Shift</p>
   </div>
   <div id="ovEnd" class="ov hidden"><h2 id="endT"></h2><p id="endS"></p><button id="btnAgain">다시 하기</button></div>
 </div></section>
