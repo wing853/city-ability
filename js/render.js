@@ -11,7 +11,7 @@ export function draw() {
   ctx.fillStyle = '#070a12'; ctx.fillRect(0, 0, VW, VH);
 
   // 카메라
-  const zoom = Math.max(0.6, Math.min(1.6, Math.min(VW, VH) / 520));
+  const zoom = Math.max(0.95, Math.min(1.65, Math.min(VW, VH) / 390));
   const vw = VW / zoom, vh = VH / zoom;
   const cx = vw >= WORLD ? (WORLD - vw) / 2 : Math.max(0, Math.min(WORLD - vw, P.x - vw / 2));
   const cy = vh >= WORLD ? (WORLD - vh) / 2 : Math.max(0, Math.min(WORLD - vh, P.y - vh / 2));
@@ -35,7 +35,7 @@ export function draw() {
 
 // Layered, asset-free city art. Geometry is decorative only; collision remains in world.js.
 function drawMap(g) {
-  ctx.fillStyle = '#101827'; ctx.fillRect(0, 0, WORLD, WORLD);
+  ctx.fillStyle = '#172432'; ctx.fillRect(0, 0, WORLD, WORLD);
   // Asphalt texture and subtle road grid.
   ctx.strokeStyle = 'rgba(138,168,200,.055)'; ctx.lineWidth = 1;
   for (let p = 0; p <= WORLD; p += 40) {
@@ -43,7 +43,7 @@ function drawMap(g) {
   }
   for (let i = 0; i < GRID; i++) for (let j = 0; j < GRID; j++) {
     const x = i * 300, y = j * 300;
-    ctx.fillStyle = '#1d2937'; ctx.fillRect(x + 38, y + 38, 224, 224);
+    ctx.fillStyle = '#293e4b'; ctx.fillRect(x + 38, y + 38, 224, 224);
     ctx.strokeStyle = '#34465a'; ctx.lineWidth = 3; ctx.strokeRect(x + 38, y + 38, 224, 224);
     // Crosswalks and lane paint, kept away from gameplay collision.
     ctx.fillStyle = 'rgba(204,222,233,.28)';
@@ -56,7 +56,7 @@ function drawMap(g) {
   }
   for (const l of lots) {
     if (!l.park) continue;
-    ctx.fillStyle = '#193a37'; ctx.fillRect(l.x - 5, l.y - 5, 211, 211);
+    ctx.fillStyle = '#235345'; ctx.fillRect(l.x - 5, l.y - 5, 211, 211);
     ctx.strokeStyle = '#436a59'; ctx.lineWidth = 3; ctx.strokeRect(l.x - 5, l.y - 5, 211, 211);
     ctx.fillStyle = '#9b9b83'; ctx.fillRect(l.x + 90, l.y - 4, 17, 209);
     ctx.fillRect(l.x - 4, l.y + 92, 209, 17);
@@ -68,20 +68,57 @@ function drawMap(g) {
     ctx.fillStyle = '#397e61'; ctx.beginPath(); ctx.arc(t.x - 3, t.y - 4, t.r * .78, 0, Math.PI * 2); ctx.fill();
     ctx.fillStyle = '#6ca486'; ctx.beginPath(); ctx.arc(t.x - t.r * .32, t.y - t.r * .42, t.r * .3, 0, Math.PI * 2); ctx.fill();
   }
+  // Roof silhouettes, architectural accents and illuminated facades.
   for (const b of rects) {
-    const temp = !!b.temp;
-    ctx.fillStyle = 'rgba(0,0,0,.5)'; ctx.fillRect(b.x + 11, b.y + 14, b.w + 5, b.h + 5);
-    ctx.fillStyle = temp ? '#6e5544' : '#26384b'; ctx.fillRect(b.x, b.y, b.w, b.h);
-    ctx.fillStyle = temp ? '#a7835e' : '#3a5268'; ctx.fillRect(b.x + 5, b.y + 5, b.w - 10, b.h - 10);
-    ctx.strokeStyle = temp ? '#d7b88a' : '#69869b'; ctx.lineWidth = 2; ctx.strokeRect(b.x + 6, b.y + 6, b.w - 12, b.h - 12);
+    const temp = !!b.temp, x = b.x, y = b.y, w = b.w, h = b.h;
+    ctx.fillStyle = 'rgba(0,0,0,.36)';
+    ctx.beginPath(); ctx.moveTo(x+10,y+h+10); ctx.lineTo(x+w+18,y+h+10);
+    ctx.lineTo(x+w+18,y+20); ctx.lineTo(x+w+10,y+12); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = temp ? '#705746' : '#263b4c';
+    ctx.fillRect(x+7,y+12,w,h);
+    // Building sides provide a readable 2.5D extrusion without moving hitboxes.
+    ctx.fillStyle = temp ? '#795c49' : '#1b3446';
+    ctx.fillRect(x+8,y+h-4,w-8,17);
+    ctx.fillStyle = temp ? '#ae8867' : '#526e7c';
+    ctx.fillRect(x,y,w,h);
+    ctx.fillStyle = temp ? '#96735a' : '#344f62';
+    ctx.fillRect(x+7,y+7,w-14,h-14);
+    ctx.strokeStyle = temp ? '#d3ad7e' : '#86a9ae';
+    ctx.lineWidth = 2; ctx.strokeRect(x+8,y+8,w-16,h-16);
     if (!temp) {
-      ctx.fillStyle = '#1b2c3c'; ctx.fillRect(b.x + 15, b.y + 15, Math.min(45, b.w - 30), 24);
-      ctx.fillStyle = '#75c6d5'; ctx.fillRect(b.x + 19, b.y + 19, Math.min(37, b.w - 38), 16);
-      ctx.fillStyle = 'rgba(167,211,223,.16)';
-      for (let xx = b.x + 22; xx < b.x + b.w - 15; xx += 31)
-        ctx.fillRect(xx, b.y + b.h - 25, 15, 7);
-      ctx.fillStyle = 'rgba(255,255,255,.12)'; ctx.fillRect(b.x + 7, b.y + 7, b.w - 14, 3);
+      const variant = Math.abs(Math.floor(x*7+y*11)) % 4;
+      // Parapets, rooftop utility blocks and skylights.
+      ctx.fillStyle = '#1c3445'; ctx.fillRect(x+17,y+18,Math.min(49,w-34),30);
+      ctx.fillStyle = '#88c9d0'; ctx.fillRect(x+22,y+22,Math.min(39,w-44),20);
+      ctx.fillStyle = '#b4e4dc'; ctx.fillRect(x+25,y+24,Math.min(13,w-50),3);
+      ctx.fillStyle = '#233b4b'; ctx.fillRect(x+w-47,y+19,27,23);
+      ctx.fillStyle = '#7296a4'; ctx.fillRect(x+w-43,y+22,19,15);
+      ctx.strokeStyle = '#c1d3c9'; ctx.lineWidth = 1;
+      for(let k=0;k<3;k++){ctx.beginPath();ctx.moveTo(x+w-42,y+25+k*5);ctx.lineTo(x+w-25,y+25+k*5);ctx.stroke();}
+      if(variant===0 || variant===2){
+        ctx.fillStyle='#223c49';ctx.fillRect(x+22,y+h-49,w-44,19);
+        ctx.fillStyle='#5d8894';for(let k=0;k<4;k++)ctx.fillRect(x+27+k*(w-60)/4,y+h-45,Math.max(5,(w-72)/5),11);
+      } else {
+        ctx.strokeStyle='#688594';ctx.lineWidth=3;
+        ctx.beginPath();ctx.arc(x+w*.55,y+h*.66,18,0,Math.PI*2);ctx.stroke();
+        ctx.fillStyle='#223c4a';ctx.beginPath();ctx.arc(x+w*.55,y+h*.66,10,0,Math.PI*2);ctx.fill();
+      }
+      // Windows on the lower facade.
+      ctx.fillStyle='#7fc4cb';for(let k=0;k<Math.floor((w-20)/24);k++) {
+        ctx.fillRect(x+14+k*24,y+h+3,11,5);
+      }
+      ctx.fillStyle='rgba(231,255,242,.22)';ctx.fillRect(x+10,y+9,w-20,3);
+    } else {
+      ctx.strokeStyle='#f0bd75';ctx.setLineDash([5,5]);ctx.strokeRect(x+13,y+13,w-26,h-26);ctx.setLineDash([]);
     }
+  }
+  // Street fixtures: warm lamps and small pools of light at intersections.
+  for(let i=0;i<GRID;i++)for(let j=0;j<GRID;j++){
+    const x=i*300+28,y=j*300+28;
+    const glow=ctx.createRadialGradient(x,y,1,x,y,28);
+    glow.addColorStop(0,'rgba(255,211,131,.22)');glow.addColorStop(1,'rgba(255,211,131,0)');
+    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(x,y,28,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#f9d38b';ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
   }
   for (const m of g.mines) {
     ctx.fillStyle = '#17212b'; ctx.beginPath(); ctx.arc(m.x, m.y, 11, 0, Math.PI * 2); ctx.fill();
@@ -93,9 +130,9 @@ function drawMap(g) {
 
 function drawAreas(g) {
   // 자기장
-  ctx.fillStyle = 'rgba(229,72,77,.26)';
+  ctx.fillStyle = 'rgba(127,38,75,.12)';
   ctx.beginPath(); ctx.rect(-50, -50, WORLD + 100, WORLD + 100); ctx.arc(CEN, CEN, g.zone.R, 0, 6.283, true); ctx.fill('evenodd');
-  ctx.strokeStyle = '#ff5a5f'; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(CEN, CEN, g.zone.R, 0, 6.283); ctx.stroke();
+  ctx.strokeStyle = '#ff688d'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(CEN, CEN, g.zone.R, 0, 6.283); ctx.stroke();
   // 중력장 · 독구름
   for (const f of g.fields) {
     const a = 0.18 + 0.08 * Math.sin(g.t * 8);
@@ -123,7 +160,7 @@ function drawFighters(g) {
     const col = C[f.ab], angle = Math.atan2(f.aim.y, f.aim.x);
     const walking = Math.hypot(f.vx, f.vy) > 35;
     const bob = walking ? Math.sin(g.t * 15 + f.id) * 1.5 : Math.sin(g.t * 3 + f.id) * .65;
-    ctx.save(); ctx.translate(f.x, f.y);
+    ctx.save(); ctx.translate(f.x, f.y); ctx.scale(1.22, 1.22);
     ctx.globalAlpha = f.inv > 0 ? .55 : 1;
     // Grounding shadow, ability aura, and facing-independent character silhouette.
     ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.beginPath(); ctx.ellipse(3, 9, 16, 7, 0, 0, Math.PI * 2); ctx.fill();
@@ -198,7 +235,7 @@ function drawTouchTarget(P, g) {
 }
 
 function drawMinimap(g, VW) {
-  const ms = 84, mx0 = VW - ms - 8, my0 = 8, k = ms / WORLD;
+  const ms = Math.min(100, Math.max(76, VW * .21)), mx0 = VW - ms - 10, my0 = 10, k = ms / WORLD;
   ctx.fillStyle = 'rgba(10,14,26,.75)'; ctx.fillRect(mx0, my0, ms, ms);
   ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 1; ctx.strokeRect(mx0, my0, ms, ms);
   ctx.save(); ctx.beginPath(); ctx.rect(mx0, my0, ms, ms); ctx.clip();
