@@ -6,6 +6,7 @@ import { ctx, view } from './view.js';
 import { inp } from './input.js';
 
 import { fighterArt } from './characterArt.js';
+import { drawNeonCity } from './neonCity.js';
 
 export function draw() {
   const g = G, P = g.fighters[0], { VW, VH, DPR } = view;
@@ -37,91 +38,7 @@ export function draw() {
 
 // Layered, asset-free city art. Geometry is decorative only; collision remains in world.js.
 function drawMap(g) {
-  ctx.fillStyle = '#172432'; ctx.fillRect(0, 0, WORLD, WORLD);
-  // Asphalt texture and subtle road grid.
-  ctx.strokeStyle = 'rgba(138,168,200,.055)'; ctx.lineWidth = 1;
-  for (let p = 0; p <= WORLD; p += 40) {
-    ctx.beginPath(); ctx.moveTo(p, 0); ctx.lineTo(p, WORLD); ctx.moveTo(0, p); ctx.lineTo(WORLD, p); ctx.stroke();
-  }
-  for (let i = 0; i < GRID; i++) for (let j = 0; j < GRID; j++) {
-    const x = i * 300, y = j * 300;
-    ctx.fillStyle = '#293e4b'; ctx.fillRect(x + 38, y + 38, 224, 224);
-    ctx.strokeStyle = '#34465a'; ctx.lineWidth = 3; ctx.strokeRect(x + 38, y + 38, 224, 224);
-    // Crosswalks and lane paint, kept away from gameplay collision.
-    ctx.fillStyle = 'rgba(204,222,233,.28)';
-    for (let k = 0; k < 5; k++) {
-      ctx.fillRect(x + 94 + k * 24, y + 12, 13, 16);
-      ctx.fillRect(x + 12, y + 94 + k * 24, 16, 13);
-    }
-    ctx.strokeStyle = 'rgba(249,205,112,.23)'; ctx.lineWidth = 2; ctx.setLineDash([13, 17]);
-    ctx.beginPath(); ctx.moveTo(x + 150, y); ctx.lineTo(x + 150, y + 35); ctx.moveTo(x, y + 150); ctx.lineTo(x + 35, y + 150); ctx.stroke(); ctx.setLineDash([]);
-  }
-  for (const l of lots) {
-    if (!l.park) continue;
-    ctx.fillStyle = '#235345'; ctx.fillRect(l.x - 5, l.y - 5, 211, 211);
-    ctx.strokeStyle = '#436a59'; ctx.lineWidth = 3; ctx.strokeRect(l.x - 5, l.y - 5, 211, 211);
-    ctx.fillStyle = '#9b9b83'; ctx.fillRect(l.x + 90, l.y - 4, 17, 209);
-    ctx.fillRect(l.x - 4, l.y + 92, 209, 17);
-    ctx.fillStyle = 'rgba(134,196,157,.12)'; ctx.fillRect(l.x + 9, l.y + 10, 67, 67);
-  }
-  for (const t of trees) {
-    ctx.fillStyle = 'rgba(0,0,0,.34)'; ctx.beginPath(); ctx.ellipse(t.x + 5, t.y + 7, t.r * 1.15, t.r * .7, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#153f36'; ctx.beginPath(); ctx.arc(t.x, t.y, t.r + 3, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#397e61'; ctx.beginPath(); ctx.arc(t.x - 3, t.y - 4, t.r * .78, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#6ca486'; ctx.beginPath(); ctx.arc(t.x - t.r * .32, t.y - t.r * .42, t.r * .3, 0, Math.PI * 2); ctx.fill();
-  }
-  // Roof silhouettes, architectural accents and illuminated facades.
-  for (const b of rects) {
-    const temp = !!b.temp, x = b.x, y = b.y, w = b.w, h = b.h;
-    ctx.fillStyle = 'rgba(0,0,0,.36)';
-    ctx.beginPath(); ctx.moveTo(x+10,y+h+10); ctx.lineTo(x+w+18,y+h+10);
-    ctx.lineTo(x+w+18,y+20); ctx.lineTo(x+w+10,y+12); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = temp ? '#705746' : '#263b4c';
-    ctx.fillRect(x+7,y+12,w,h);
-    // Building sides provide a readable 2.5D extrusion without moving hitboxes.
-    ctx.fillStyle = temp ? '#795c49' : '#1b3446';
-    ctx.fillRect(x+8,y+h-4,w-8,17);
-    ctx.fillStyle = temp ? '#ae8867' : '#526e7c';
-    ctx.fillRect(x,y,w,h);
-    ctx.fillStyle = temp ? '#96735a' : '#344f62';
-    ctx.fillRect(x+7,y+7,w-14,h-14);
-    ctx.strokeStyle = temp ? '#d3ad7e' : '#86a9ae';
-    ctx.lineWidth = 2; ctx.strokeRect(x+8,y+8,w-16,h-16);
-    if (!temp) {
-      const variant = Math.abs(Math.floor(x*7+y*11)) % 4;
-      // Parapets, rooftop utility blocks and skylights.
-      ctx.fillStyle = '#1c3445'; ctx.fillRect(x+17,y+18,Math.min(49,w-34),30);
-      ctx.fillStyle = '#88c9d0'; ctx.fillRect(x+22,y+22,Math.min(39,w-44),20);
-      ctx.fillStyle = '#b4e4dc'; ctx.fillRect(x+25,y+24,Math.min(13,w-50),3);
-      ctx.fillStyle = '#233b4b'; ctx.fillRect(x+w-47,y+19,27,23);
-      ctx.fillStyle = '#7296a4'; ctx.fillRect(x+w-43,y+22,19,15);
-      ctx.strokeStyle = '#c1d3c9'; ctx.lineWidth = 1;
-      for(let k=0;k<3;k++){ctx.beginPath();ctx.moveTo(x+w-42,y+25+k*5);ctx.lineTo(x+w-25,y+25+k*5);ctx.stroke();}
-      if(variant===0 || variant===2){
-        ctx.fillStyle='#223c49';ctx.fillRect(x+22,y+h-49,w-44,19);
-        ctx.fillStyle='#5d8894';for(let k=0;k<4;k++)ctx.fillRect(x+27+k*(w-60)/4,y+h-45,Math.max(5,(w-72)/5),11);
-      } else {
-        ctx.strokeStyle='#688594';ctx.lineWidth=3;
-        ctx.beginPath();ctx.arc(x+w*.55,y+h*.66,18,0,Math.PI*2);ctx.stroke();
-        ctx.fillStyle='#223c4a';ctx.beginPath();ctx.arc(x+w*.55,y+h*.66,10,0,Math.PI*2);ctx.fill();
-      }
-      // Windows on the lower facade.
-      ctx.fillStyle='#7fc4cb';for(let k=0;k<Math.floor((w-20)/24);k++) {
-        ctx.fillRect(x+14+k*24,y+h+3,11,5);
-      }
-      ctx.fillStyle='rgba(231,255,242,.22)';ctx.fillRect(x+10,y+9,w-20,3);
-    } else {
-      ctx.strokeStyle='#f0bd75';ctx.setLineDash([5,5]);ctx.strokeRect(x+13,y+13,w-26,h-26);ctx.setLineDash([]);
-    }
-  }
-  // Street fixtures: warm lamps and small pools of light at intersections.
-  for(let i=0;i<GRID;i++)for(let j=0;j<GRID;j++){
-    const x=i*300+28,y=j*300+28;
-    const glow=ctx.createRadialGradient(x,y,1,x,y,28);
-    glow.addColorStop(0,'rgba(255,211,131,.22)');glow.addColorStop(1,'rgba(255,211,131,0)');
-    ctx.fillStyle=glow;ctx.beginPath();ctx.arc(x,y,28,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#f9d38b';ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
-  }
+  drawNeonCity(ctx, GRID, WORLD, rects, lots, trees);
   for (const m of g.mines) {
     ctx.fillStyle = '#17212b'; ctx.beginPath(); ctx.arc(m.x, m.y, 11, 0, Math.PI * 2); ctx.fill();
     ctx.strokeStyle = '#ffbd68'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(m.x, m.y, 8, 0, Math.PI * 2); ctx.stroke();
