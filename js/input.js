@@ -5,7 +5,7 @@ import { cv, view } from './view.js';
 
 export const keys = {};
 export const inp = {
-  skill: false, dash: false,
+  skill: false, dash: false, attack: false,
   mdown: false, mx: 0, my: 0, mseen: false,   // 마우스(화면 좌표)
   touchAim: false, tx: 0, ty: 0,              // 공격 터치(화면 좌표)
   jvx: 0, jvy: 0                              // 이동 스틱(-1..1)
@@ -28,7 +28,7 @@ cv.addEventListener('contextmenu', e => e.preventDefault());
 
 // 이동 스틱
 const STICK_R = 50;
-let joyId = null, jox = 0, joy0 = 0, atkId = null;
+let joyId = null, jox = 0, joy0 = 0;
 function stickShow(x, y) { const j = $('joy'); j.style.display = 'block'; j.style.left = x + 'px'; j.style.top = y + 'px'; }
 function knobSet(dx, dy) { const k = $('knob'); k.style.left = (35 + dx) + 'px'; k.style.top = (35 + dy) + 'px'; }
 
@@ -39,8 +39,6 @@ cv.addEventListener('touchstart', e => {
     const x = t.clientX - r.left, y = t.clientY - r.top;
     if (x < r.width * 0.5) {
       if (joyId === null) { joyId = t.identifier; jox = t.clientX; joy0 = t.clientY; stickShow(x, y); knobSet(0, 0); }
-    } else if (atkId === null) {
-      atkId = t.identifier; inp.touchAim = true; inp.tx = x; inp.ty = y;
     }
   }
 }, { passive: false });
@@ -53,8 +51,6 @@ cv.addEventListener('touchmove', e => {
       let dx = t.clientX - jox, dy = t.clientY - joy0; const m = Math.hypot(dx, dy);
       if (m > STICK_R) { dx = dx / m * STICK_R; dy = dy / m * STICK_R; }
       inp.jvx = dx / STICK_R; inp.jvy = dy / STICK_R; knobSet(dx, dy);
-    } else if (t.identifier === atkId) {
-      inp.tx = t.clientX - r.left; inp.ty = t.clientY - r.top;
     }
   }
 }, { passive: false });
@@ -62,7 +58,6 @@ cv.addEventListener('touchmove', e => {
 function touchEnd(e) {
   for (const t of e.changedTouches) {
     if (t.identifier === joyId) { joyId = null; inp.jvx = inp.jvy = 0; $('joy').style.display = 'none'; }
-    if (t.identifier === atkId) { atkId = null; inp.touchAim = false; }
   }
 }
 cv.addEventListener('touchend', touchEnd);
@@ -74,5 +69,19 @@ function bindBtn(el, fn) {
 }
 bindBtn($('bSkill'), () => { inp.skill = true; });
 bindBtn($('bDash'), () => { inp.dash = true; });
+
+// Hold-to-fire with multi-touch support. Pointer capture prevents stuck attacks.
+const attackButton=$('bAttack');
+attackButton.style.touchAction='none';
+attackButton.addEventListener('pointerdown',e=>{
+  if(!view.playTab)return;
+  e.preventDefault();e.stopPropagation();
+  inp.attack=true;
+  attackButton.setPointerCapture(e.pointerId);
+});
+for(const event of ['pointerup','pointercancel','lostpointercapture']){
+  attackButton.addEventListener(event,()=>{inp.attack=false;});
+}
+addEventListener('blur',()=>{inp.attack=false;inp.mdown=false;});
 
 export function resetActions() { inp.skill = inp.dash = false; }
