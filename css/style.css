@@ -88,3 +88,46 @@ canvas{display:block;touch-action:none}
 /* 능력 아이콘 버튼 */
 .action-btn.icon{font-size:22px;font-weight:900;color:#fff;text-shadow:0 0 6px #000,0 2px 4px #000}
 .action-btn.icon.cd{opacity:1;filter:grayscale(.7) brightness(.55)}
+
+/* 시작 화면 */
+.title{position:absolute;inset:0;z-index:20;overflow:hidden;background:#090a1c}
+.t-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:0% 50%}
+.t-shade{position:absolute;inset:0;background:linear-gradient(180deg,#0a0b22aa 0%,#0a0b2200 28%,#0a0b2200 45%,#0a0b22d9 72%,#0a0b22f2 100%)}
+.t-logo{position:absolute;left:50%;top:3%;width:min(92%,520px);transform:translateX(-50%);-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 58%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 58%,transparent 100%)}
+.t-menu{position:absolute;left:50%;bottom:7%;transform:translateX(-50%);width:min(84%,380px);display:flex;flex-direction:column;align-items:center;gap:10px}
+.t-btn{appearance:none;-webkit-appearance:none;border:0;padding:0;background:none;cursor:pointer;width:82%;transition:transform .12s,filter .12s}
+.t-btn:first-child{width:100%}
+.t-btn img{display:block;width:100%;height:auto;border-radius:6px}
+.t-btn:active{transform:scale(.96);filter:brightness(1.25)}
+.t-ver{position:absolute;right:10px;top:8px;font-size:12px;color:#e8e6ff;text-shadow:0 1px 3px #000}
+.t-toast{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);background:#14122ee8;border:1px solid #8f7cff88;color:#efeaff;padding:10px 14px;border-radius:10px;font-size:13px;white-space:nowrap}
+/* 가로 화면: 원본 그림 그대로, 버튼 이미지는 숨기고 그림 속 버튼 위에 투명 터치 영역 */
+.title.wide .t-bg{object-position:50% 50%}
+.title.wide .t-shade,.title.wide .t-logo,.title.wide .t-ver{display:none}
+.title.wide .t-menu{position:absolute;inset:0;transform:none;width:auto;display:block}
+.title.wide .t-btn{position:absolute;width:auto}
+.title.wide .t-btn img{opacity:0}
+.title.wide .t-btn:active{transform:none;filter:none;background:#ffffff1f;border-radius:8px}
+
+/* 공통 패널(도감·설정) */
+.ov-back{position:absolute;left:12px;top:10px;background:none;border:0;color:#b9c8ff;font-size:14px;font-weight:700}
+.ov-link{background:none;border:0;color:#b9c8ff;font-size:14px;font-weight:700;margin-top:4px}
+.ov.panel{z-index:21;justify-content:flex-start;padding:0;background:radial-gradient(ellipse at 50% 0%,#2a1f5a,#0a0b1c 70%)}
+.panel-head{position:sticky;top:0;width:100%;display:flex;align-items:center;justify-content:center;padding:14px 48px;background:#0d0c22e6;border-bottom:1px solid #4d3f9a66;z-index:1}
+.panel-head h2{font-size:20px}
+.panel-close{position:absolute;right:10px;top:8px;width:36px;height:36px;border-radius:50%;border:1px solid #6b5cc455;background:#1b1840;color:#fff;font-size:16px}
+.codex{width:100%;max-width:640px;padding:12px;display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:620px){.codex{grid-template-columns:1fr 1fr}}
+.cx{display:flex;gap:10px;align-items:stretch;text-align:left;background:linear-gradient(140deg,#1d1a44e6,#0f0e26f0);border:1px solid #4a3f8f88;border-left:4px solid var(--c);border-radius:12px;padding:10px}
+.cx-art{width:72px;height:84px;object-fit:contain;flex:0 0 auto}
+.cx-body{flex:1;min-width:0}
+.cx-name{font-size:16px;font-weight:800;color:var(--c)}
+.cx-desc{font-size:12px;color:#b7bddb;margin:2px 0 6px}
+.cx-move{display:flex;gap:8px;align-items:flex-start;margin-top:4px}
+.cx-move img{width:34px;height:34px;flex:0 0 auto}
+.cx-move b{display:block;font-size:13px;color:#eef}
+.cx-move span{font-size:12px;color:#aab1d2;line-height:1.35}
+.set-list{width:100%;max-width:420px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;background:#17153a;border:1px solid #4a3f8f88;border-radius:12px;padding:12px 14px;font-weight:700;font-size:15px}
+.set-row small{display:block;font-weight:400;font-size:12px;color:#a9b0d0;margin-top:2px}
+.set-row input{width:22px;height:22px;accent-color:#8f7cff;flex:0 0 auto}

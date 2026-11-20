@@ -7,6 +7,7 @@ import { inp } from './input.js';
 
 import { fighterArt } from './characterArt.js';
 import { drawNeonCity } from './neonCity.js';
+import { settings } from './settings.js';
 
 export function draw() {
   const g = G, P = g.fighters[0], { VW, VH, DPR } = view;
@@ -19,7 +20,8 @@ export function draw() {
   const cx = vw >= WORLD ? (WORLD - vw) / 2 : Math.max(0, Math.min(WORLD - vw, P.x - vw / 2));
   const cy = vh >= WORLD ? (WORLD - vh) / 2 : Math.max(0, Math.min(WORLD - vh, P.y - vh / 2));
   g.cam.x = cx; g.cam.y = cy; g.cam.zoom = zoom;
-  const sx = (Math.random() - .5) * g.shake, sy = (Math.random() - .5) * g.shake;
+  const shake = settings.shake ? g.shake : 0;
+  const sx = (Math.random() - .5) * shake, sy = (Math.random() - .5) * shake;
 
   ctx.save(); ctx.scale(zoom, zoom); ctx.translate(-cx + sx, -cy + sy);
   drawMap(g);
@@ -156,7 +158,7 @@ function drawEffects(g) {
     ctx.globalAlpha = 1;
   }
   ctx.font = 'bold 12px sans-serif'; ctx.textAlign = 'center';
-  for (const t of g.txt) {
+  if (settings.dmgText) for (const t of g.txt) {
     ctx.globalAlpha = Math.min(1, t.t * 2); ctx.lineWidth = 3; ctx.strokeStyle = '#000'; ctx.strokeText(t.s, t.x, t.y);
     ctx.fillStyle = t.col; ctx.fillText(t.s, t.x, t.y);
   }

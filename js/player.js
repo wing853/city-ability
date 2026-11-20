@@ -2,6 +2,7 @@
 import { G } from './state.js';
 import { keys, inp } from './input.js';
 import { blocked } from './world.js';
+import { settings } from './settings.js';
 
 const AUTO_RANGE = 520;          // 자동 조준 최대 거리
 const TARGET_SKILLS = ['shock', 'grav', 'poison']; // 자동 조준 시 대상 위치에 떨어지는 스킬
@@ -35,7 +36,7 @@ export function playerCtrl(f) {
   inp.target = null;
 
   const auto = () => {
-    const a = autoTarget(f);
+    const a = settings.autoAim ? autoTarget(f) : null;
     if (a) { inp.target = a.t; ctl.aim = { x: a.t.x - f.x, y: a.t.y - f.y }; }
     else if (Math.hypot(mx, my) > 0.2) ctl.aim = { x: mx, y: my };
     return a;

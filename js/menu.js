@@ -3,6 +3,7 @@ import { $ } from './utils.js';
 import { AB, AB_KEYS, C } from './config.js';
 import { view, resize } from './view.js';
 import { newGame, menuState } from './state.js';
+import { showTitle } from './title.js';
 
 function setTab(play) {
   view.playTab = play;
@@ -48,3 +49,5 @@ document.querySelectorAll('#cnt button').forEach(b => {
 });
 $('btnGo').onclick = () => { $('ovStart').classList.add('hidden'); newGame(rolled, playerCount); };
 $('btnAgain').onclick = () => { $('ovEnd').classList.add('hidden'); $('ovStart').classList.remove('hidden'); resetRoll(); menuState(); };
+$('btnEndTitle').onclick = () => { $('ovEnd').classList.add('hidden'); resetRoll(); menuState(); showTitle(); };
+$('btnBackTitle').onclick = () => { $('ovStart').classList.add('hidden'); resetRoll(); showTitle(); };

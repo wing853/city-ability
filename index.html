@@ -76,7 +76,8 @@
   <button id="bAttack" class="btn action-btn" type="button" aria-label="기본 공격">공격</button>
   <div id="aimHint">탭: 자동 조준 · 버튼에서 끌기: 방향 조준</div>
 
-  <div id="ovStart" class="ov">
+  <div id="ovStart" class="ov hidden">
+    <button id="btnBackTitle" class="ov-back" type="button">← 타이틀</button>
     <h1>도시능력자</h1>
     <p id="startMsg">각성하면 능력 14종 중 하나가 무작위로 정해집니다.<br>마음에 안 들면 딱 한 번 다시 뽑을 수 있어요.</p>
     <p>인원 선택 (나 포함)</p>
@@ -89,7 +90,38 @@
     </div>
     <p class="hint">4~10인 난투 · 나 + AI 봇 · 마지막까지 살아남으면 승리<br>모바일: 왼쪽 드래그 이동 / 오른쪽 공격·스킬 버튼(탭 자동 조준, 끌어서 방향 조준) · PC: WASD, 마우스, Space, Shift</p>
   </div>
-  <div id="ovEnd" class="ov hidden"><h2 id="endT"></h2><p id="endS"></p><button id="btnAgain">다시 하기</button></div>
+  <div id="ovEnd" class="ov hidden"><h2 id="endT"></h2><p id="endS"></p><button id="btnAgain">다시 하기</button><button id="btnEndTitle" class="ov-link" type="button">타이틀로</button></div>
+
+  <!-- 시작 화면: 가로 화면은 원본 그림 위 버튼 자리에 터치 영역, 세로 화면은 로고·버튼을 세로로 재배치 -->
+  <div id="ovTitle" class="title">
+    <img class="t-bg" src="assets/title/title_bg.webp" alt="">
+    <div class="t-shade"></div>
+    <img class="t-logo" src="assets/title/logo.webp" alt="City Ability 시티 어빌리티">
+    <nav class="t-menu">
+      <button class="t-btn" data-act="start" data-box="858,464,1312,556" type="button"><img src="assets/title/btn_start.webp" alt="게임 시작"></button>
+      <button class="t-btn" data-act="codex" data-box="915,562,1280,634" type="button"><img src="assets/title/btn_codex.webp" alt="능력 도감"></button>
+      <button class="t-btn" data-act="settings" data-box="915,640,1280,712" type="button"><img src="assets/title/btn_settings.webp" alt="설정"></button>
+      <button class="t-btn" data-act="quit" data-box="915,718,1280,792" type="button"><img src="assets/title/btn_quit.webp" alt="게임 종료"></button>
+    </nav>
+    <span class="t-ver">v1.0.0</span>
+    <div id="titleToast" class="t-toast hidden"></div>
+  </div>
+
+  <!-- 능력 도감 -->
+  <div id="ovCodex" class="ov panel hidden">
+    <div class="panel-head"><h2>능력 도감</h2><button class="panel-close" data-close="ovCodex" type="button" aria-label="닫기">✕</button></div>
+    <div id="codexList" class="codex"></div>
+  </div>
+
+  <!-- 설정 -->
+  <div id="ovSettings" class="ov panel hidden">
+    <div class="panel-head"><h2>설정</h2><button class="panel-close" data-close="ovSettings" type="button" aria-label="닫기">✕</button></div>
+    <div class="set-list">
+      <label class="set-row"><span>화면 흔들림<small>피격·폭발 시 화면이 흔들립니다</small></span><input type="checkbox" data-set="shake"></label>
+      <label class="set-row"><span>데미지 숫자<small>맞은 대상 위에 피해량을 표시합니다</small></span><input type="checkbox" data-set="dmgText"></label>
+      <label class="set-row"><span>자동 조준<small>공격·스킬 버튼을 탭하면 가장 가까운 적을 조준합니다</small></span><input type="checkbox" data-set="autoAim"></label>
+    </div>
+  </div>
 </div></section>
 </main>
 
