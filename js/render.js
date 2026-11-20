@@ -5,12 +5,7 @@ import { rects, lots, trees } from './world.js';
 import { ctx, view } from './view.js';
 import { inp } from './input.js';
 
-// Vector character art stays sharp on high-DPI phones; canvas silhouette is fallback.
-const heroSprite = new Image();
-let heroReady = false;
-heroSprite.onload = () => { heroReady = true; };
-heroSprite.onerror = () => { heroReady = false; };
-heroSprite.src = new URL('../assets/characters/hero.svg', import.meta.url).href;
+import { fighterArt } from './characterArt.js';
 
 export function draw() {
   const g = G, P = g.fighters[0], { VW, VH, DPR } = view;
@@ -175,8 +170,10 @@ function drawFighters(g) {
     ctx.beginPath(); ctx.ellipse(0, 6, 18 + Math.sin(g.t * 5) * 1.2, 9, 0, 0, Math.PI * 2); ctx.stroke();
     ctx.globalAlpha = f.inv > 0 ? .55 : 1;
     ctx.rotate(angle + Math.PI / 2);
-    if (heroReady) {
-      ctx.drawImage(heroSprite, -30, -37 + bob, 60, 60);
+    const portrait = fighterArt[f.ab];
+    if (portrait && portrait.complete && portrait.naturalWidth > 0) {
+      // All fighters have distinct vector art. High-resolution at any device DPR.
+      ctx.drawImage(portrait, -30, -52 + bob, 60, 68);
       ctx.restore();
       if (f.poison && f.poison.t > 0 || f.reflect > 0 || f.haste > 0 || f.frz > 0) {
         ctx.strokeStyle = f.reflect > 0 ? C.mirror : f.haste > 0 ? C.haste : f.frz > 0 ? C.ice : C.poison;
