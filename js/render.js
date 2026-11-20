@@ -5,6 +5,13 @@ import { rects, lots, trees } from './world.js';
 import { ctx, view } from './view.js';
 import { inp } from './input.js';
 
+// Vector character art stays sharp on high-DPI phones; canvas silhouette is fallback.
+const heroSprite = new Image();
+let heroReady = false;
+heroSprite.onload = () => { heroReady = true; };
+heroSprite.onerror = () => { heroReady = false; };
+heroSprite.src = new URL('../assets/characters/hero.svg', import.meta.url).href;
+
 export function draw() {
   const g = G, P = g.fighters[0], { VW, VH, DPR } = view;
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -168,6 +175,21 @@ function drawFighters(g) {
     ctx.beginPath(); ctx.ellipse(0, 6, 18 + Math.sin(g.t * 5) * 1.2, 9, 0, 0, Math.PI * 2); ctx.stroke();
     ctx.globalAlpha = f.inv > 0 ? .55 : 1;
     ctx.rotate(angle + Math.PI / 2);
+    if (heroReady) {
+      ctx.drawImage(heroSprite, -30, -37 + bob, 60, 60);
+      ctx.restore();
+      if (f.poison && f.poison.t > 0 || f.reflect > 0 || f.haste > 0 || f.frz > 0) {
+        ctx.strokeStyle = f.reflect > 0 ? C.mirror : f.haste > 0 ? C.haste : f.frz > 0 ? C.ice : C.poison;
+        ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(f.x,f.y,22+Math.sin(g.t*8)*2,0,Math.PI*2); ctx.stroke();
+      }
+      const w = 38;
+      ctx.fillStyle = 'rgba(4,9,17,.85)'; ctx.fillRect(f.x-w/2-2,f.y-37,w+4,8);
+      ctx.fillStyle = f.id === 0 ? '#59e2a1' : '#fb7586';
+      ctx.fillRect(f.x-w/2,f.y-35,w*Math.max(0,f.hp/f.mhp),4);
+      ctx.fillStyle = '#f5faff'; ctx.textAlign = 'center'; ctx.font = 'bold 10px sans-serif';
+      ctx.fillText(f.id === 0 ? '나' : AB[f.ab].name, f.x, f.y-42);
+      continue;
+    }
     ctx.fillStyle = '#111c2d'; ctx.strokeStyle = f.id === 0 ? '#eaf8ff' : '#09101b'; ctx.lineWidth = 2.5;
     // Legs, torso, sleeves and face are layered for readable top-down animation.
     ctx.fillRect(-9, 5 + bob, 7, 12); ctx.fillRect(2, 5 - bob, 7, 12);
