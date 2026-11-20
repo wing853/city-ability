@@ -89,7 +89,7 @@ function drawFighters(g) {
     const portrait = fighterArt[f.ab];
     if (portrait && portrait.complete && portrait.naturalWidth > 0) {
       // 실제 캐릭터 이미지: 회전하지 않고 세워서 그림. 조준이 왼쪽이면 좌우 반전. 원본 비율 유지
-      const ph = 58, pw = ph * portrait.naturalWidth / portrait.naturalHeight;
+      const ph = 64, pw = ph * portrait.naturalWidth / portrait.naturalHeight;
       if (f.aim.x < 0) ctx.scale(-1, 1);
       ctx.drawImage(portrait, -pw / 2, -ph + 12 + bob, pw, ph);
       ctx.restore();
