@@ -46,3 +46,32 @@ canvas{display:block;touch-action:none}
 .seg button.on{background:#4cc9ff;color:#06121c;border-color:#4cc9ff}
 .hint{font-size:12px!important;color:#7f8bb0!important}
 #btnAgain{padding:12px 28px;border:0;border-radius:12px;background:#4cc9ff;color:#06121c;font-weight:800;font-size:16px}
+
+/* Visual refresh: cinematic midnight HUD and glass panels */
+#tabs{background:linear-gradient(110deg,#101a2a,#19293b);border-bottom:1px solid #3b5366;box-shadow:0 5px 22px #050d18a8;z-index:5}
+#tabs button{background:#1d3041;color:#a9c4d5;border:1px solid #355067;letter-spacing:.025em;transition:background .2s,transform .2s}
+#tabs button.on{background:linear-gradient(135deg,#66dcf0,#4aa9d9);color:#071824;box-shadow:0 2px 16px #4cc9ff55}
+#hpWrap{height:21px;background:#07131de8;border:1px solid #638a9c;border-radius:8px;box-shadow:0 3px 14px #0008}
+#hpBar{background:linear-gradient(90deg,#e9596b,#ffad72);box-shadow:inset 0 2px 4px #ffffff33}
+#hpTxt{line-height:19px;font-size:11px;text-shadow:0 1px 3px #000}
+#info{color:#e5f5ff;letter-spacing:.03em;font-size:13px;text-shadow:0 2px 6px #000}
+#zoneTxt{color:#ffc08d;text-shadow:0 1px 6px #000}
+#feed{background:#0714219c;border:1px solid #5a738444;border-radius:10px;padding:7px 9px;backdrop-filter:blur(8px)}
+.btn{background:linear-gradient(145deg,#315c78c9,#142b44e8);border:2px solid #a5d6e8a6;box-shadow:0 4px 18px #0009,inset 0 1px 8px #b6f4ff25;text-shadow:0 2px 4px #000}
+#bSkill{background:linear-gradient(145deg,#167c9bcf,#142a48f2);box-shadow:0 0 24px #4cc9ff35,0 5px 16px #0009}
+#bDash{background:linear-gradient(145deg,#506476d9,#1a2d41ee)}
+.btn.cd{opacity:.55;filter:saturate(.55)}
+.stick{border-color:#c0eaff77;background:#6bc8e51c;box-shadow:0 0 18px #4cc9ff26}
+.knob{background:radial-gradient(circle at 35% 30%,#d5f6ffb0,#5d9cbb88);box-shadow:0 2px 10px #0009}
+.ov{background:radial-gradient(ellipse at 50% 30%,#19384bde,#050b15f5 75%);backdrop-filter:blur(7px)}
+.ov h1{font-weight:900;letter-spacing:.08em;color:#f2faff;text-shadow:0 0 25px #52b6df66}
+.ov h2{color:#eaf8ff;text-shadow:0 0 15px #4cc9ff66}
+.card{background:linear-gradient(140deg,#21374ddf,#101d31ef);border:1px solid #52738d;border-radius:15px;box-shadow:0 5px 18px #0004;transition:background .2s,transform .15s}
+.card:active{transform:scale(.985);background:#29445b}
+.seg button{background:#14283b;border:1px solid #45637b;color:#b7d0df}
+.seg button.on,#btnAgain{background:linear-gradient(135deg,#72e2f4,#459fdb);color:#071a27;border-color:#82e4f5;box-shadow:0 3px 16px #4cc9ff40}
+#plan{background:linear-gradient(#0d1726,#111b2b)}
+#plan h2{color:#7ddbf3}
+#plan th{background:#1a3044}
+#plan th,#plan td{border-color:#385166}
+@media(max-width:480px){#hud{left:9px;right:9px}#hpWrap{max-width:205px}#info{font-size:12px}#feed{font-size:11px;max-width:45%}#bSkill{width:76px;height:76px;right:13px;bottom:170px}#bDash{width:58px;height:58px;right:100px;bottom:169px}}
