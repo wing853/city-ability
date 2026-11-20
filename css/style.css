@@ -75,3 +75,12 @@ canvas{display:block;touch-action:none}
 #plan th{background:#1a3044}
 #plan th,#plan td{border-color:#385166}
 @media(max-width:480px){#hud{left:9px;right:9px}#hpWrap{max-width:205px}#info{font-size:12px}#feed{font-size:11px;max-width:45%}#bSkill{width:76px;height:76px;right:13px;bottom:170px}#bDash{width:58px;height:58px;right:100px;bottom:169px}}
+
+/* Three-button mobile combat controls: attack / skill / roll */
+.action-btn{appearance:none;-webkit-appearance:none;cursor:pointer;touch-action:none;padding:6px;z-index:3}
+#bAttack{width:100px;height:100px;right:20px;bottom:32px;font-size:21px;background:radial-gradient(circle at 32% 22%,#d56aff,#6427aa 60%,#21104d);border:3px solid #e2b9ff;box-shadow:0 0 25px #a84bff80,inset 0 0 14px #edbaff66,0 6px 20px #000a}
+#bSkill{width:78px;height:78px;right:24px;bottom:148px;font-size:13px;background:radial-gradient(circle at 30% 20%,#55b4ff,#184f9b 65%,#102249)}
+#bDash{width:65px;height:65px;right:129px;bottom:107px;font-size:12px;background:radial-gradient(circle at 30% 20%,#8b9cb7,#304359 70%)}
+.action-btn:active{transform:scale(.94);filter:brightness(1.2)}
+#aimHint{bottom:8px;right:135px;font-size:11px;max-width:180px}
+@media(max-width:480px){#bAttack{width:88px;height:88px;right:13px;bottom:27px;font-size:19px}#bSkill{width:70px;height:70px;right:17px;bottom:126px;font-size:12px}#bDash{width:59px;height:59px;right:109px;bottom:92px;font-size:11px}#aimHint{right:110px;bottom:10px;font-size:10px}}
