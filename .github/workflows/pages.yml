@@ -29,6 +29,13 @@ jobs:
           cp -r index.html css js _site/
           if [ -d assets ]; then cp -r assets _site/; fi
           touch _site/.nojekyll
+      - name: 캐시 무효화용 버전 붙이기
+        # 브라우저가 옛 JS/CSS를 캐시에서 쓰지 않도록 모든 모듈 주소에 커밋 버전을 붙임
+        run: |
+          V="${GITHUB_SHA::7}"
+          sed -i -E "s#(src=\"js/main\.js)\"#\1?v=$V\"#; s#(href=\"css/style\.css)\"#\1?v=$V\"#" _site/index.html
+          sed -i -E "s#((from|import) '\./[A-Za-z]+\.js)'#\1?v=$V'#g" _site/js/*.js
+          grep -c "?v=$V" _site/index.html _site/js/*.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
