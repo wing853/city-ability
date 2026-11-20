@@ -9,7 +9,8 @@ function load(name,url){
  img.src=new URL(url,import.meta.url).href;images[name]=img;
 }
 load('road','../assets/environment/wet_neon_road.webp');
-load('building','../assets/environment/building.webp');
+load('cafe','../assets/environment/building_cafe.webp');
+load('mart','../assets/environment/building_mart.webp');
 load('tree','../assets/environment/cherry_blossom.webp');
 load('lamp','../assets/environment/street_lamp.webp');
 function ready(img){return img&&img.complete&&img.naturalWidth>0}
@@ -44,8 +45,9 @@ function paint(ctx,grid,world,rects,lots,trees){
  }
  for(const b of rects){
   if(b.temp){ctx.fillStyle='#705062';ctx.fillRect(b.x,b.y,b.w,b.h);continue}
-  if(ready(images.building)){
-   ctx.drawImage(images.building,b.x,b.y,b.w,b.h);
+  const building=((Math.floor(b.x/300)+Math.floor(b.y/300))%2===0)?images.cafe:images.mart;
+  if(ready(building)){
+   ctx.drawImage(building,b.x,b.y,b.w,b.h);
   }else{
    // Non-SVG fallback until the real raster building asset is uploaded.
    ctx.fillStyle='#303b53';ctx.fillRect(b.x+8,b.y+12,b.w,b.h);
