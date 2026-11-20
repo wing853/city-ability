@@ -1,6 +1,6 @@
 // Neon city environment art layer. Procedural SVG textures are cached as images.
 // All geometry comes from world.js; collision and gameplay remain unchanged.
-const cache=new Map();
+let sceneCanvas=null, sceneKey='';
 function image(svg){const im=new Image();im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);return im}
 const wrap=(w,h,body)=>'<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'">'+body+'</svg>';
 function buildingSVG(w,h,variant){
@@ -43,7 +43,7 @@ const blossom=image(wrap(128,128,`<defs><radialGradient id="p"><stop stop-color=
 </g><g fill="#fff1ff" opacity=".8"><circle cx="29" cy="40" r="3"/><circle cx="65" cy="19" r="4"/><circle cx="92" cy="51" r="3"/><circle cx="53" cy="67" r="4"/><circle cx="84" cy="77" r="3"/></g>`));
 const lamp=image(wrap(80,95,`<defs><radialGradient id="l"><stop stop-color="#ffd88a" stop-opacity=".6"/><stop offset="1" stop-color="#ffd88a" stop-opacity="0"/></radialGradient></defs><circle cx="40" cy="30" r="38" fill="url(#l)"/><path d="M40 82V31" stroke="#182035" stroke-width="5"/><path d="M31 23H49L45 36H35Z" fill="#ffd49b" stroke="#4c3442" stroke-width="3"/><circle cx="40" cy="25" r="5" fill="#fff4bf"/>`));
 function drawImage(ctx,im,x,y,w,h){if(im.complete&&im.naturalWidth)ctx.drawImage(im,x,y,w,h)}
-export function drawNeonCity(ctx,grid,world,rects,lots,trees){
+function paintCity(ctx,grid,world,rects,lots,trees){
  ctx.fillStyle='#181d33';ctx.fillRect(0,0,world,world);
  // Wet asphalt with restrained reflections.
  for(let i=0;i<grid;i++)for(let j=0;j<grid;j++){
@@ -52,6 +52,12 @@ export function drawNeonCity(ctx,grid,world,rects,lots,trees){
   ctx.strokeStyle='#62647e';ctx.lineWidth=3;ctx.strokeRect(x+36,y+36,228,228);
   ctx.fillStyle='rgba(255,193,232,.12)';ctx.fillRect(x+8,y+34,7,115);
   ctx.fillStyle='rgba(101,192,255,.12)';ctx.fillRect(x+286,y+154,5,104);
+  // Wet road glints and subtle pavement seams.
+  ctx.fillStyle='rgba(95,180,245,.08)';
+  for(let n=0;n<9;n++){const px=x+((n*79+31)%280),py=y+((n*53+72)%280);ctx.fillRect(px,py,4+(n%4)*8,1+n%2)}
+  ctx.fillStyle='rgba(255,100,205,.09)';ctx.fillRect(x+37,y+262,80,3);ctx.fillRect(x+260,y+41,4,78);
+  ctx.strokeStyle='rgba(220,200,230,.08)';ctx.lineWidth=1;
+  for(let p=48;p<255;p+=21){ctx.beginPath();ctx.moveTo(x+36,y+p);ctx.lineTo(x+264,y+p);ctx.stroke()}
   ctx.fillStyle='#c3bdd7a6';
   for(let k=0;k<5;k++){ctx.fillRect(x+91+k*25,y+15,14,18);ctx.fillRect(x+15,y+91+k*25,18,14)}
   ctx.strokeStyle='#cfae81a0';ctx.lineWidth=2;ctx.setLineDash([15,17]);
@@ -69,4 +75,34 @@ export function drawNeonCity(ctx,grid,world,rects,lots,trees){
   drawImage(ctx,getBuilding(w,h,variant),b.x-2,b.y-3,w+36,h+49);
  }
  for(const t of trees)drawImage(ctx,blossom,t.x-t.r*2.8,t.y-t.r*3.7,t.r*5.6,t.r*5.6);
+ // Roadside details and deterministic sakura petals.
+ for(let i=0;i<grid;i++)for(let j=0;j<grid;j++){
+  const x=i*300,y=j*300;
+  ctx.fillStyle='#171b2b';ctx.fillRect(x+37,y+38,34,7);ctx.fillRect(x+229,y+251,34,7);
+  ctx.strokeStyle='#8994a8';ctx.lineWidth=1;
+  for(let k=0;k<4;k++){ctx.beginPath();ctx.moveTo(x+40+k*8,y+38);ctx.lineTo(x+40+k*8,y+45);ctx.stroke()}
+  const tint=(i+j)%2?'#ff78c9':'#6ecbff';
+  ctx.fillStyle=tint;ctx.globalAlpha=.16;
+  ctx.fillRect(x+45,y+267,60,3);ctx.fillRect(x+52,y+274,43,2);
+  ctx.globalAlpha=1;ctx.fillStyle='#ffc5ed';
+  for(let p=0;p<8;p++){
+   const px=x+((p*37+i*11+j*17)%280)+10;
+   const py=y+((p*73+i*13+j*7)%280)+10;
+   ctx.globalAlpha=.35+(p%3)*.15;
+   ctx.beginPath();ctx.ellipse(px,py,2.3,1.1,p*1.2,0,Math.PI*2);ctx.fill();
+  }
+  ctx.globalAlpha=1;
+ }
+}
+export function drawNeonCity(ctx,grid,world,rects,lots,trees){
+ // Cache static scene; temporary walls trigger a rebuild.
+ const key=world+':'+rects.length+':'+rects.filter(b=>b.temp).map(b=>[b.x,b.y,b.w,b.h].join(',')).join(';');
+ if(!sceneCanvas||sceneKey!==key){
+  const surface=document.createElement('canvas');surface.width=world;surface.height=world;
+  const c=surface.getContext('2d',{alpha:false});
+  if(!c){paintCity(ctx,grid,world,rects,lots,trees);return}
+  paintCity(c,grid,world,rects,lots,trees);
+  sceneCanvas=surface;sceneKey=key;
+ }
+ ctx.drawImage(sceneCanvas,0,0);
 }
