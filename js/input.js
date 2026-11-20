@@ -1,13 +1,18 @@
 // 키보드 · 마우스 · 터치 입력
-// 모바일: 왼쪽 절반 드래그 = 이동 스틱, 오른쪽 절반 터치 = 터치한 위치로 공격(누르는 동안 연사)
+// 모바일: 왼쪽 절반 드래그 = 이동 스틱
+//   공격 버튼: 누르는 동안 연사. 탭하면 가장 가까운 적 자동 조준, 버튼에서 손가락을 끌면 그 방향으로 조준
+//   스킬 버튼: 손을 뗄 때 발동. 탭이면 자동 조준, 끌었다 떼면 끈 방향으로 발동
 import { $ } from './utils.js';
 import { cv, view } from './view.js';
 
 export const keys = {};
 export const inp = {
-  skill: false, dash: false, attack: false,
+  skill: false, dash: false,
+  attack: false, atkDir: null,                // 공격 버튼: 누르는 중, 끌어서 정한 조준 방향(없으면 자동 조준)
+  skHeld: false, skDir: null,                 // 스킬 버튼: 누르는 중, 끌어서 정한 조준 방향
+  skillBtn: false, skillDir: null,            // 이번 프레임 버튼으로 발동한 스킬과 그 방향
+  target: null,                               // 자동 조준 대상(표시용)
   mdown: false, mx: 0, my: 0, mseen: false,   // 마우스(화면 좌표)
-  touchAim: false, tx: 0, ty: 0,              // 공격 터치(화면 좌표)
   jvx: 0, jvy: 0                              // 이동 스틱(-1..1)
 };
 
@@ -63,25 +68,43 @@ function touchEnd(e) {
 cv.addEventListener('touchend', touchEnd);
 cv.addEventListener('touchcancel', touchEnd);
 
-function bindBtn(el, fn) {
-  el.addEventListener('touchstart', e => { e.preventDefault(); e.stopPropagation(); fn(); }, { passive: false });
-  el.addEventListener('mousedown', e => { e.preventDefault(); fn(); });
+// 버튼: 누른 위치에서 손가락을 DRAG_MIN 이상 끌면 그 방향이 조준 방향
+const DRAG_MIN = 14;
+function dragButton(el, { down, move, up }) {
+  let id = null, ox = 0, oy = 0;
+  el.addEventListener('pointerdown', e => {
+    if (!view.playTab || id !== null) return;
+    e.preventDefault(); e.stopPropagation();
+    id = e.pointerId; ox = e.clientX; oy = e.clientY;
+    el.setPointerCapture(e.pointerId);
+    down();
+  });
+  el.addEventListener('pointermove', e => {
+    if (e.pointerId !== id) return;
+    const dx = e.clientX - ox, dy = e.clientY - oy;
+    move(Math.hypot(dx, dy) >= DRAG_MIN ? { x: dx, y: dy } : null);
+  });
+  const end = e => { if (e.pointerId !== id) return; id = null; up(e.type === 'pointerup'); };
+  for (const ev of ['pointerup', 'pointercancel', 'lostpointercapture']) el.addEventListener(ev, end);
 }
-bindBtn($('bSkill'), () => { inp.skill = true; });
-bindBtn($('bDash'), () => { inp.dash = true; });
 
-// Hold-to-fire with multi-touch support. Pointer capture prevents stuck attacks.
-const attackButton=$('bAttack');
-attackButton.style.touchAction='none';
-attackButton.addEventListener('pointerdown',e=>{
-  if(!view.playTab)return;
-  e.preventDefault();e.stopPropagation();
-  inp.attack=true;
-  attackButton.setPointerCapture(e.pointerId);
+dragButton($('bAttack'), {
+  down: () => { inp.attack = true; inp.atkDir = null; },
+  move: dir => { inp.atkDir = dir; },
+  up: () => { inp.attack = false; inp.atkDir = null; }
 });
-for(const event of ['pointerup','pointercancel','lostpointercapture']){
-  attackButton.addEventListener(event,()=>{inp.attack=false;});
-}
-addEventListener('blur',()=>{inp.attack=false;inp.mdown=false;});
+dragButton($('bSkill'), {
+  down: () => { inp.skHeld = true; inp.skDir = null; },
+  move: dir => { inp.skDir = dir; },
+  up: released => {
+    if (released && inp.skHeld) { inp.skill = true; inp.skillBtn = true; inp.skillDir = inp.skDir; }
+    inp.skHeld = false; inp.skDir = null;
+  }
+});
+$('bDash').addEventListener('pointerdown', e => {
+  if (!view.playTab) return;
+  e.preventDefault(); e.stopPropagation(); inp.dash = true;
+});
+addEventListener('blur', () => { inp.attack = false; inp.atkDir = null; inp.skHeld = false; inp.skDir = null; inp.mdown = false; });
 
-export function resetActions() { inp.skill = inp.dash = false; }
+export function resetActions() { inp.skill = inp.dash = inp.skillBtn = false; inp.skillDir = null; inp.target = null; }

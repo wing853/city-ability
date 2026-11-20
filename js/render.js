@@ -164,13 +164,15 @@ function drawEffects(g) {
 }
 
 // 공격 터치 중인 위치에 조준점 표시
+// 자동 조준 대상 표시
 function drawTouchTarget(P, g) {
-  if (!inp.touchAim || !P.alive || g.state !== 'play') return;
-  const x = inp.tx, y = inp.ty;
-  ctx.strokeStyle = 'rgba(255,120,120,.85)'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(x, y, 16, 0, 6.283); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(x - 24, y); ctx.lineTo(x - 8, y); ctx.moveTo(x + 8, y); ctx.lineTo(x + 24, y);
-  ctx.moveTo(x, y - 24); ctx.lineTo(x, y - 8); ctx.moveTo(x, y + 8); ctx.lineTo(x, y + 24); ctx.stroke();
+  const t = inp.target;
+  if (!t || !t.alive || !P.alive || g.state !== 'play') return;
+  const c = g.cam, x = (t.x - c.x) * c.zoom, y = (t.y - c.y) * c.zoom;
+  ctx.strokeStyle = 'rgba(255,120,120,.9)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(x, y, 26, 0, 6.283); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 34, y); ctx.lineTo(x - 20, y); ctx.moveTo(x + 20, y); ctx.lineTo(x + 34, y);
+  ctx.moveTo(x, y - 34); ctx.lineTo(x, y - 20); ctx.moveTo(x, y + 20); ctx.lineTo(x, y + 34); ctx.stroke();
 }
 
 function drawMinimap(g, VW) {

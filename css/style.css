@@ -84,3 +84,7 @@ canvas{display:block;touch-action:none}
 .action-btn:active{transform:scale(.94);filter:brightness(1.2)}
 #aimHint{bottom:8px;right:135px;font-size:11px;max-width:180px}
 @media(max-width:480px){#bAttack{width:88px;height:88px;right:13px;bottom:27px;font-size:19px}#bSkill{width:70px;height:70px;right:17px;bottom:126px;font-size:12px}#bDash{width:59px;height:59px;right:109px;bottom:92px;font-size:11px}#aimHint{right:110px;bottom:10px;font-size:10px}}
+
+/* 능력 아이콘 버튼 */
+.action-btn.icon{font-size:22px;font-weight:900;color:#fff;text-shadow:0 0 6px #000,0 2px 4px #000}
+.action-btn.icon.cd{opacity:1;filter:grayscale(.7) brightness(.55)}
