@@ -86,24 +86,27 @@ function drawFighters(g) {
     ctx.strokeStyle = col; ctx.globalAlpha *= .68; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.ellipse(0, 6, 18 + Math.sin(g.t * 5) * 1.2, 9, 0, 0, Math.PI * 2); ctx.stroke();
     ctx.globalAlpha = f.inv > 0 ? .55 : 1;
-    ctx.rotate(angle + Math.PI / 2);
     const portrait = fighterArt[f.ab];
     if (portrait && portrait.complete && portrait.naturalWidth > 0) {
-      // All fighters have distinct vector art. High-resolution at any device DPR.
-      ctx.drawImage(portrait, -30, -52 + bob, 60, 68);
+      // 실제 캐릭터 이미지: 회전하지 않고 세워서 그림. 조준이 왼쪽이면 좌우 반전. 원본 비율 유지
+      const ph = 58, pw = ph * portrait.naturalWidth / portrait.naturalHeight;
+      if (f.aim.x < 0) ctx.scale(-1, 1);
+      ctx.drawImage(portrait, -pw / 2, -ph + 12 + bob, pw, ph);
       ctx.restore();
       if (f.poison && f.poison.t > 0 || f.reflect > 0 || f.haste > 0 || f.frz > 0) {
         ctx.strokeStyle = f.reflect > 0 ? C.mirror : f.haste > 0 ? C.haste : f.frz > 0 ? C.ice : C.poison;
         ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(f.x,f.y,22+Math.sin(g.t*8)*2,0,Math.PI*2); ctx.stroke();
       }
-      const w = 38;
-      ctx.fillStyle = 'rgba(4,9,17,.85)'; ctx.fillRect(f.x-w/2-2,f.y-37,w+4,8);
+      // 이미지 캐릭터는 키가 커서 체력바·이름을 머리 위로 올림
+      const w = 38, top = f.y - (ph - 12) * 1.22 - 12;
+      ctx.fillStyle = 'rgba(4,9,17,.85)'; ctx.fillRect(f.x-w/2-2,top,w+4,8);
       ctx.fillStyle = f.id === 0 ? '#59e2a1' : '#fb7586';
-      ctx.fillRect(f.x-w/2,f.y-35,w*Math.max(0,f.hp/f.mhp),4);
+      ctx.fillRect(f.x-w/2,top+2,w*Math.max(0,f.hp/f.mhp),4);
       ctx.fillStyle = '#f5faff'; ctx.textAlign = 'center'; ctx.font = 'bold 10px sans-serif';
-      ctx.fillText(f.id === 0 ? '나' : AB[f.ab].name, f.x, f.y-42);
+      ctx.fillText(f.id === 0 ? '나' : AB[f.ab].name, f.x, top-5);
       continue;
     }
+    ctx.rotate(angle + Math.PI / 2);
     ctx.fillStyle = '#111c2d'; ctx.strokeStyle = f.id === 0 ? '#eaf8ff' : '#09101b'; ctx.lineWidth = 2.5;
     // Legs, torso, sleeves and face are layered for readable top-down animation.
     ctx.fillRect(-9, 5 + bob, 7, 12); ctx.fillRect(2, 5 - bob, 7, 12);

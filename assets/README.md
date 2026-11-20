@@ -1,18 +1,14 @@
-# HD raster asset pack (v1)
+# 게임 이미지 에셋
 
-This folder is reserved for **real WebP/PNG art**, not SVG approximations.
+| 파일 | 용도 | 크기 |
+|---|---|---|
+| `environment/building_cafe.webp` | 건물(카페), 투명 배경 | 444×335 |
+| `environment/building_mart.webp` | 건물(편의점), 투명 배경 | 454×334 |
+| `environment/cherry_blossom.webp` | 공원 벚꽃나무, 투명 배경 | 372×334 |
+| `environment/street_lamp.webp` | 가로등, 투명 배경 | 127×334 |
+| `environment/wet_neon_road.webp` | 도로 바닥 반복 타일 | 334×334 |
+| `characters/shadow.webp` | 그림자 능력 캐릭터, 투명 배경 | 250×334 |
 
-## Files in the prepared package
-- `assets/environment/wet_neon_road.webp` — 1024×1024 wet neon asphalt texture
-- `visual_target.webp` — concept/reference composition, **not** a game-ready tile
-
-The raster package is provided separately in the ChatGPT conversation as `city_ability_hd_assets_v1.zip`. Binary image files have **not yet been uploaded to this repository**. Do not change the live renderer to load these paths until the files are present.
-
-## Integration
-1. Upload `wet_neon_road.webp` to `assets/environment/`.
-2. Keep existing collision and world coordinates.
-3. Tile/crop the road texture on the world background, while retaining collision overlays.
-4. Create transparent building, cherry blossom and fighter sprites as separate PNG/WebP assets, then replace the current vector placeholders.
-5. Test on mobile before enabling by default.
-
-Reference visual direction: neon-lit rainy Korean city at night, cherry blossoms, detailed anime 2D action RPG.
+- 렌더러는 원본 비율을 유지해서 그립니다. 충돌 판정은 `js/world.js` 그대로입니다.
+- 캐릭터 이미지는 `js/characterArt.js`의 `available` 목록에 있는 능력만 불러옵니다. 새 캐릭터(`<능력키>.webp`)를 넣으면 목록에 추가하세요. 없는 능력은 캔버스 그림으로 대체됩니다.
+- 이미지가 없거나 로드에 실패하면 각 렌더러의 캔버스 대체 그림이 쓰입니다.

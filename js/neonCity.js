@@ -14,6 +14,8 @@ load('mart','../assets/environment/building_mart.webp');
 load('tree','../assets/environment/cherry_blossom.webp');
 load('lamp','../assets/environment/street_lamp.webp');
 function ready(img){return img&&img.complete&&img.naturalWidth>0}
+// 원본 비율 유지: 너비 w에 맞춘 높이
+function hFor(img,w){return w*img.naturalHeight/img.naturalWidth}
 let cached=null,key='';
 function paint(ctx,grid,world,rects,lots,trees){
  ctx.fillStyle='#191d31';ctx.fillRect(0,0,world,world);
@@ -34,7 +36,8 @@ function paint(ctx,grid,world,rects,lots,trees){
    ctx.fillRect(x+268,y+95+k*23,18,12);
   }
   if(ready(images.lamp)){
-   ctx.drawImage(images.lamp,x+18,y+17,50,70);
+   const lh=78,lw=lh*images.lamp.naturalWidth/images.lamp.naturalHeight;
+   ctx.drawImage(images.lamp,x+30-lw/2,y+10,lw,lh);
   }else{
    ctx.fillStyle='#ffc883';ctx.beginPath();ctx.arc(x+36,y+36,4,0,Math.PI*2);ctx.fill();
   }
@@ -47,7 +50,10 @@ function paint(ctx,grid,world,rects,lots,trees){
   if(b.temp){ctx.fillStyle='#705062';ctx.fillRect(b.x,b.y,b.w,b.h);continue}
   const building=((Math.floor(b.x/300)+Math.floor(b.y/300))%2===0)?images.cafe:images.mart;
   if(ready(building)){
-   ctx.drawImage(building,b.x,b.y,b.w,b.h);
+   // 너비는 충돌 영역에 맞추고 비율 유지, 아래쪽 정렬. 남는 윗부분은 옥상색 판으로 채워 충돌 영역을 보이게 함
+   const dh=Math.min(hFor(building,b.w),b.h*1.15);
+   ctx.fillStyle='#262a44';ctx.fillRect(b.x+4,b.y,b.w-8,b.h-dh+12);
+   ctx.drawImage(building,b.x,b.y+b.h-dh,b.w,dh);
   }else{
    // Non-SVG fallback until the real raster building asset is uploaded.
    ctx.fillStyle='#303b53';ctx.fillRect(b.x+8,b.y+12,b.w,b.h);
@@ -56,7 +62,7 @@ function paint(ctx,grid,world,rects,lots,trees){
   }
  }
  for(const t of trees){
-  if(ready(images.tree))ctx.drawImage(images.tree,t.x-t.r*2.5,t.y-t.r*3.2,t.r*5,t.r*5);
+  if(ready(images.tree)){const tw=t.r*5.2,th=hFor(images.tree,tw);ctx.drawImage(images.tree,t.x-tw/2,t.y-th*0.72,tw,th)}
   else{
    ctx.fillStyle='#d88bbd';ctx.beginPath();ctx.arc(t.x,t.y,t.r*1.3,0,Math.PI*2);ctx.fill();
   }
