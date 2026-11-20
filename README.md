@@ -11,6 +11,8 @@ npm start            # node server.js, 의존성 없음 (PORT 환경변수 사�
 # http://localhost:8000
 ```
 
+폰에서 열기: PC와 폰을 같은 Wi-Fi에 연결하고 `npm start`를 실행하면 터미널에 `폰(같은 Wi-Fi): http://192.168.x.x:8000` 주소가 나옵니다. 그 주소를 폰 브라우저에 입력하세요. 안 열리면 PC 방화벽에서 Node.js의 개인 네트워크 접근을 허용하세요.
+
 GitHub Pages에 올려도 그대로 동작합니다.
 
 ## 조작
