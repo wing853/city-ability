@@ -1,0 +1,8 @@
+{
+  "name": "city-ability",
+  "version": "0.1.0",
+  "private": true,
+  "description": "도시능력자 탑다운 난투 프로토타입",
+  "scripts": { "start": "node server.js" },
+  "engines": { "node": ">=18" }
+}

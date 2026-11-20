@@ -7,7 +7,7 @@
 ES 모듈을 쓰기 때문에 `index.html`을 파일로 직접 열면 동작하지 않습니다. 로컬 서버로 여세요.
 
 ```bash
-python3 -m http.server 8000   # 또는 npx serve
+npm start            # node server.js, 의존성 없음 (PORT 환경변수 사용)
 # http://localhost:8000
 ```
 
